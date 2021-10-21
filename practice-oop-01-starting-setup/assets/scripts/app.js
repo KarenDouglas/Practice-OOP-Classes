@@ -13,10 +13,39 @@ class DomHelper {
     }
 }
 
-class Tooltip {
-    constructor(closeNotifierFn) {
-        this.closeNotifier =closeNotifierFn;
+class Component {
 
+    constructor(hostElementId, insertBefore = false){
+        if(hostElementId){
+            this.hostElement = document.getElementById(hostElementId);
+        } else {
+            this.hostElement = document.body;
+        }
+        this.insertBefore = insertBefore;
+    }
+    detach() {
+
+        if(this.element){
+            this.element.remove();
+        }
+        //this.element.parentElement.removeChild(this.element);
+    }
+
+    attach() {
+      
+        this.hostElement.insertAdjacentElement(
+            this.insertBefore ? 'afterbegin': 'beforeend', 
+            this.element       
+            )
+    }
+
+}
+
+class Tooltip extends Component{
+    constructor(closeNotifierFn) {
+        super('active-projects', true);
+        this.closeNotifier =closeNotifierFn;
+        this.renderTooltip();
     }
 
     closeToolTip = () => {
@@ -24,20 +53,15 @@ class Tooltip {
         this.closeNotifier();
     }
 
-    detach() {
-        this.element.remove();
-        //this.element.parentElement.removeChild(this.element);
-    }
-
-    attach() {
+    renderTooltip () {
         const tooltipElement= document.createElement('div');
         tooltipElement.className = 'card';
         tooltipElement.textContent = ' DUMMY CONTENT';
         tooltipElement.addEventListener('click', this.closeToolTip);
         this.element = tooltipElement;
-        document.body.append(tooltipElement);
-
     }
+
+    
 }
 
 class ProjectItem {
